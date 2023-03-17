@@ -22,7 +22,7 @@ library(dplyr) #makes the %>% pipes work in functions.
 library(geomorph) #for reading in shape data
 library(readxl) #for reading in metadata
 library(scales) #for rescale for colors, not cutting anymore
-library(inlmisc) #for colors in heat map, error
+library(khroma) #for Paul Tol color schemes
 library(ggplot2)
 source("rearrange3ddat.R")
 source("flipPC.R")
@@ -37,13 +37,13 @@ source("sensitivity_utils.R")
 page.width<-6.5 #width in inches for PeerJ figures. 
 
 #Set color scheme for PC plots using Paul Tol color scheme
-color_scheme<-GetColors(n=3, scheme="high-contrast")
+color_scheme<-colour("high contrast")(3)
 
 #set up a palette for heat map
-rainbow1<-GetColors(scheme="sunset")
+rainbow1<-colour("sunset")
 
 #set up a palette for tooth loci
-scale_locus<-as.character(GetColors(3,scheme="discrete rainbow"))
+scale_locus<-colour("discrete rainbow")(3)
 
 # Read in data -----------------------------------------------------------------
 setwd(locateData) #this setup assumes that your metadata and auto3dgm output folder are in the same place
@@ -127,12 +127,32 @@ differences_PC1<-shpdif(PC1.shapes$pc1$max,PC1.shapes$pc1$min,rainbow1,alter="no
 open3d()
 plot3d(PC1.shapes$pc1$max,axes=F,col=differences_PC1,size=10,xlab="",ylab="",zlab="")
 writePLY("PC1_max.ply",format="ascii",pointRadius=0.005)
-rgl.close()
+close3d()
 
 open3d()
 plot3d(PC1.shapes$pc1$min,axes=F,col=differences_PC1,size=10,xlab="",ylab="",zlab="")
 writePLY("PC1_min.ply",format="ascii",pointRadius=0.005)
-rgl.close()
+close3d()
+
+#calculate PC2 max and min shapes
+#calculate PC1 max and min shapes.
+PC2.shapes<-pcdif(PCA,mshp(molars$m2d), pcs=2)
+
+#find colors for each point corresponding to heat map of differences
+differences_PC2<-shpdif(PC2.shapes$pc2$max,PC2.shapes$pc2$min,rainbow1,alter="none",outlier=FALSE)
+
+#plot
+open3d()
+plot3d(PC2.shapes$pc2$max,axes=F,col=differences_PC2,size=10,xlab="",ylab="",zlab="")
+writePLY("PC2_max.ply",format="ascii",pointRadius=0.005)
+close3d()
+
+
+open3d()
+plot3d(PC2.shapes$pc2$min,axes=F,col=differences_PC2,size=10,xlab="",ylab="",zlab="")
+writePLY("PC2_min.ply",format="ascii",pointRadius=0.005)
+close3d()
+
 
 # Procrustes ANOVA ------
 gdf.hyrax<-geomorph.data.frame(coords = molars$m2d[choose.match,],
