@@ -7,21 +7,21 @@ library(ggplot2) #plot
 library(readxl) #read procavia data
 library(reshape2)
 library(caret)
-library(inlmisc) #for more Paul Tol color options
+library(khroma) #for  Paul Tol color options
 
-# locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
-locateData<-"D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
+locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
+# locateData<-"D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
 
-locateScripts<-"C:/scripts/scripts/hyracoid-locus-example"
+locateScripts<-"C:/scripts/hyracoid-locus-example"
 
 #settings for plotting -------------------------------
 single.column.width<-3.27
 double.column.width<-6.61
-scale_n<-as.character(GetColors(10,scheme="sunset"))
-scale_locus<-as.character(GetColors(3,scheme="muted"))
+scale_n<-as.character(colour("sunset")(10))
+scale_locus<-as.character(colour("muted")(3))
 
 #read measurement spreadsheets
-#UPPERS ---------
+# UPPERS ---------
 # data.procavia<-read_excel(paste(locateData,"modern-procavia-metadata-uppers.xlsx",sep="/"))
 # data.comparative<-read_excel(paste(locateData,"hyracoidea_fayum_locus_comparisons.xlsx",sep="/"),sheet="Measurements-Upper")
 # 

@@ -7,14 +7,14 @@
 ###############################################################################
 locateScripts <- "C://scripts/observer-free-morphotype-characterization/"
 
-# locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
-locateData <- "D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
+locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
+# locateData <- "D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
 
-# shape.folder<-"procavia-65k-1024-211119-qc" #lower teeth
-shape.folder<-"procavia-u56k-1024-220816" #upper teeth
+shape.folder<-"procavia-65k-1024-211119-qc" #lower teeth
+# shape.folder<-"procavia-u56k-1024-220816" #upper teeth
 
-# metadata.file<-"modern-procavia-metadata.xlsx"
-metadata.file<-"modern-procavia-metadata-uppers.xlsx"
+metadata.file<-"modern-procavia-metadata.xlsx"
+# metadata.file<-"modern-procavia-metadata-uppers.xlsx"
 
 # Load Dependencies ------------------------------------------------------------------
 setwd(locateScripts)

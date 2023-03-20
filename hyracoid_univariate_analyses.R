@@ -58,8 +58,15 @@ ggsave("comparative_ratios.pdf",device = cairo_pdf, width = double.column.width,
        height = double.column.width,units="in",dpi=600)
 
 # #Reporting: Sample Table ----
-data.jaws %>% group_by(genus,species) %>% summarise(n = length(unique(Sample))) %>%
-  write.csv("hyracoid_sampling.csv")
+#pre-review version
+# data.jaws %>% group_by(genus,species) %>% summarise(n = length(unique(Sample))) %>%
+#   write.csv("hyracoid_sampling.csv")
+
+#post-review version
+n.to.write<-data.jaws %>% group_by(genus,species,Position) %>% 
+  summarise(n = length(unique(Sample))) #%>% 
+dcast(n.to.write, genus + species ~ Position, value.var="n") %>% 
+  write.csv("hyracoid_sampling_revised.csv")
 
 #statistics: LDA --------
 #note, only ~20% of teeth are m3 in dataset

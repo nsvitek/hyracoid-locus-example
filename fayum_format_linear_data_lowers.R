@@ -53,3 +53,6 @@ sink()
 #make data object for LDA
 model_data<-data.jaws %>% dplyr::select(Sample, Position, rel.length, rel.widths,) %>% 
   na.omit()
+
+model_data_taxa<-data.jaws %>% dplyr::select(Sample, Position, rel.length, rel.widths,species) %>% 
+  na.omit()
