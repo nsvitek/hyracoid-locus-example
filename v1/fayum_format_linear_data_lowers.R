@@ -49,3 +49,10 @@ print("Test for Interaction Between Ratios")
 aov(as.numeric(factor(Position)) ~ rel.widths * rel.length, data = data.jaws) %>% summary
 
 sink()
+
+#make data object for LDA
+model_data<-data.jaws %>% dplyr::select(Sample, Position, rel.length, rel.widths,) %>% 
+  na.omit()
+
+model_data_taxa<-data.jaws %>% dplyr::select(Sample, Position, rel.length, rel.widths,species) %>% 
+  na.omit()

@@ -71,3 +71,7 @@ aov(as.numeric(factor(Position)) ~ rel.widths * rel.meta, data = data.jaws) %>% 
 
 
 sink()
+
+#make data object for LDA
+model_data<-data.jaws %>% dplyr::select(Sample, Position, rel.length, rel.widths,
+                                        rel.meta) %>% na.omit()
