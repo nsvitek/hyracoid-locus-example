@@ -27,7 +27,7 @@ source(paste(locateScripts,comparative_format_script,sep="/"))
 #COMPARATIVE LITERATURE ----
 source(paste(locateScripts,literature_format_script,sep="/"))
 
-if(arcade=="upers"){ #minor formatting change to make late code work
+if(arcade=="uppers"){ #minor formatting change to make late code work
   data.lit$Position<-tolower(data.lit$Position)
 }
 #merge all datasets ----------

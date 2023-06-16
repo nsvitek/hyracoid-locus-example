@@ -47,27 +47,3 @@ linear2plot2<-data.jaws %>%
 measure.labels<-c("paraloph : length","length : m1 length","metloph : length","paraloph : metaloph")
 names(measure.labels)<-c("proportion","rel.length","rel.meta","rel.widths")
 
-#statistics: ANOVA ------
-sink("ANOVA_results.txt")
-
-print("Paraloph Width : Length")
-aov(as.numeric(factor(Position)) ~ proportion, data = data.jaws) %>% summary
-
-print("Metaloph Width : Length")
-aov(as.numeric(factor(Position)) ~ rel.meta, data = data.jaws) %>% summary
-
-
-print("Paraloph Width : Metaloph Width")
-aov(as.numeric(factor(Position)) ~ rel.widths, data = data.jaws) %>% summary
-
-print("Length : M1 Length")
-aov(as.numeric(factor(Position)) ~ rel.length, data = data.jaws) %>% summary
-
-print("Test for Interaction Between Ratios /n relative widths vs relative lengths")
-aov(as.numeric(factor(Position)) ~ rel.widths * rel.length, data = data.jaws) %>% summary
-
-print("relative widths vs. metalophid width")
-aov(as.numeric(factor(Position)) ~ rel.widths * rel.meta, data = data.jaws) %>% summary
-
-
-sink()

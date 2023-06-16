@@ -1,3 +1,28 @@
+# ANOVAs ----
+#statistics: ANOVA ------
+sink("ANOVA_results.txt")
+
+print("Paraloph Width : Length")
+aov(as.numeric(factor(Position)) ~ proportion * species, data = data.jaws) %>% summary
+
+print("Metaloph Width : Length")
+aov(as.numeric(factor(Position)) ~ rel.meta * species, data = data.jaws) %>% summary
+
+
+print("Paraloph Width : Metaloph Width")
+aov(as.numeric(factor(Position)) ~ rel.widths * species, data = data.jaws) %>% summary
+
+print("Length : M1 Length")
+aov(as.numeric(factor(Position)) ~ rel.length * species, data = data.jaws) %>% summary
+
+print("Test for Interaction Between Ratios /n relative widths vs relative lengths")
+aov(as.numeric(factor(Position)) ~ rel.widths * rel.length * species, data = data.jaws) %>% summary
+
+print("relative widths vs. metalophid width")
+aov(as.numeric(factor(Position)) ~ rel.widths * rel.meta * species, data = data.jaws) %>% summary
+
+sink()
+
 #is locus distinctiveness shared across species? ----
 
 #table of mean per-locus values, 

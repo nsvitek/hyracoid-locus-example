@@ -5,7 +5,6 @@
 
 Start at `hyracoid_base.R`. This is the entry point that loads librariers, sets file paths, etc.
 
-The next steps (which is automatically sourced in the base script) are in `hyracoid_merge_data.R`. The first parts of this script source the formatting scripts..
+The next steps (which is automatically sourced in the base script) are in `hyracoid_merge_data.R`. The first parts of this script source the formatting scripts and get the data in a state to be analyzed. 
 
-
-The next part produce descriptive statistics, then conduct analyses. 
+The next part (`hyracoid_analyses.R`) produces descriptive statistics, then conduct analyses, including calling scripts that are specific to the upper or lower tooth arcade (because slightly different sets of variables are evaluated in each). 

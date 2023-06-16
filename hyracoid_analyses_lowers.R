@@ -1,5 +1,18 @@
-#is locus distinctiveness shared across species? ----
+#statistics: ANOVA ------
+sink("ANOVA_results.txt")
 
+print("Trigonid Width : Talonid Width")
+aov(as.numeric(factor(Position)) ~ rel.widths * species, data = data.jaws) %>% summary
+
+print("Length : M1 Length")
+aov(as.numeric(factor(Position)) ~ rel.length * species, data = data.jaws) %>% summary
+
+print("Test for Interaction Between Ratios")
+aov(as.numeric(factor(Position)) ~ rel.widths * rel.length * species, data = data.jaws) %>% summary
+
+sink()
+
+#is locus distinctiveness shared across species? ----
 #table of mean per-locus values, 
 mean.ratios<-data.jaws %>% group_by(Position,genus,species) %>% 
   summarise(rw = round(mean(rel.widths, na.rm=TRUE),3), l = round(mean(rel.length, na.rm=TRUE),3)) %>% 

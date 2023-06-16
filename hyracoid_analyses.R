@@ -45,6 +45,13 @@ if(arcade=="uppers"){
 }
 
 # ARCADE-GENERAL: include literature measurements ------
+sink("ANOVA_results_literature.txt")
+
+print("Length : M1 Length")
+aov(as.numeric(factor(Position)) ~ rel.length * species, data = data.jaws.all) %>% summary
+
+sink()
+
 mean.ratios<-data.jaws.all %>% group_by(Position,genus,species) %>% 
   summarise(l = round(mean(rel.length, na.rm=TRUE),3)) %>% 
   dcast(genus + species ~ Position)

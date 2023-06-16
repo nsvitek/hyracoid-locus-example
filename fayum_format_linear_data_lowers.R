@@ -35,17 +35,3 @@ linear2plot2<-data.jaws %>%
 #Make facet label names
 measure.labels<-c("length : M1 length", "trigonid width : talonid width")
 names(measure.labels)<-c("rel.length","rel.widths")
-
-#statistics: ANOVA ------
-sink("ANOVA_results.txt")
-
-print("Trigonid Width : Talonid Width")
-aov(as.numeric(factor(Position)) ~ rel.widths, data = data.jaws) %>% summary
-
-print("Length : M1 Length")
-aov(as.numeric(factor(Position)) ~ rel.length, data = data.jaws) %>% summary
-
-print("Test for Interaction Between Ratios")
-aov(as.numeric(factor(Position)) ~ rel.widths * rel.length, data = data.jaws) %>% summary
-
-sink()
