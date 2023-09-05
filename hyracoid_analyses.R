@@ -60,7 +60,7 @@ mean.ratios<-data.jaws.all %>% group_by(Position,genus,species) %>%
 directionality.table<-cbind(mean.ratios$m1 < mean.ratios$m2,
                             mean.ratios$m2 < mean.ratios$m3)
 
-write.csv(cbind(mean.ratios,directionality.table),"ratios_increase_down_row.csv")
+write.csv(cbind(mean.ratios,directionality.table),"ratios_increase_down_row_literature.csv")
 
 #are successive mean values outside of prior locus 2*sd? -------
 
@@ -69,4 +69,4 @@ m2.shorter<-((mean.ratios$m2-mean.ratios$m3)/stdevs$stdev[10])  %>% pnorm() %>% 
 
 overlap.table<-cbind(mean.ratios,m1.shorter,m2.shorter)
 
-write.csv(overlap.table,"ratios_differ.csv")
+write.csv(overlap.table,"ratios_differ_literature.csv")

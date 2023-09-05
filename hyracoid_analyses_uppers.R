@@ -54,10 +54,12 @@ p.vals.m1.rw<-((mean.ratios$m1_rw-mean.ratios$m2_rw)/stdevs$stdev[8])  %>% pnorm
 p.vals.m2.rw<-((mean.ratios$m2_rw-mean.ratios$m3_rw)/stdevs$stdev[12])  %>% pnorm() %>% round(4)
 p.vals.m1.l<-((mean.ratios$m1_l-mean.ratios$m2_l)/stdevs$stdev[6])  %>% pnorm() %>% round(4)
 p.vals.m2.l<-((mean.ratios$m2_l-mean.ratios$m3_l)/stdevs$stdev[10])  %>% pnorm() %>% round(4)
+p.vals.m1.ml<-((mean.ratios$m1_ml-mean.ratios$m2_ml)/stdevs$stdev[7])  %>% pnorm() %>% round(4)
+p.vals.m2.ml<-((mean.ratios$m2_ml-mean.ratios$m3_ml)/stdevs$stdev[11])  %>% pnorm() %>% round(4)
 
 overlap.table<-cbind(mean.ratios,p.vals.m1.rw,
                      p.vals.m2.rw,
                      p.vals.m1.l,
-                     p.vals.m2.l)
+                     p.vals.m2.l, p.vals.m1.ml, p.vals.m2.ml)
 
 write.csv(overlap.table,"ratios_differ.csv")
