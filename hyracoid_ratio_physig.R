@@ -7,12 +7,12 @@ library(RRphylo) #for applying dates to tree, resolving polytomies
 
 library(picante) #for blomberg's k
 library(geiger) #for pagel's lambda
-library(caper) #for pagel's lambda
+library(caper) #for pagel's lambda alternative
 
 # set path, objects used no matter what ------
 getwd()
-# setwd("D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position")
-setwd("C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position")
+setwd("D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position")
+# setwd("C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position")
 
 cooper.tree<-read.newick("hyracoid_cooper.tre")
 #alternative, if no file:
@@ -50,37 +50,44 @@ ratios.raw$tip.name<-paste(ratios.raw$genus,ratios.raw$species,sep="_")
 keep.these.tips<-which(cooper.fixed$tip.label %in% ratios.raw$tip.name)
 drop.these.tips<-cooper.fixed$tip.label[-keep.these.tips]
 cooper.trim<-drop.tip(cooper.fixed,drop.these.tips)
-cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
-                                    "Thyrohyrax_meyeri",
-                                    "Thyrohyrax_domorictus","Prohyrax_hendeyi",
-                                   "Procavia_capensis"))
-cooper.trim$node.label<-NA
-
+cooper.trim<-drop.tip(cooper.trim,c("Seggeurius_amourensis"))
+# cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
+#                                     "Thyrohyrax_meyeri",
+#                                     "Thyrohyrax_domorictus","Prohyrax_hendeyi",
+#                                    "Procavia_capensis"))
+cooper.trim$node.label<-NULL #remove node labels entirely
 plot(cooper.trim)
-?drop.clade()
 
 #pull the m2 ratio into a separate formatted object, following tutorials
 m2.ratio<-ratios.raw$m2
 names(m2.ratio)<-ratios.raw$tip.name
 m2.ratio<-m2.ratio[complete.cases(m2.ratio)] #inferred names causing issues with caper downstream
 
-
 #pull the m3 ratio into a separate formatted object, following tutorials
 m3.ratio<-ratios.raw$m3
 names(m3.ratio)<-ratios.raw$tip.name
 m3.ratio<-m3.ratio[complete.cases(m3.ratio)]
 
-#Blomberg et al's K
+#Blomberg et al's K ------------
 Kcalc(m2.ratio[cooper.fixed$tip.label], cooper.fixed)
 phylosignal(m2.ratio[cooper.fixed$tip.label], cooper.fixed, reps = 1000)
 
 Kcalc(m2.ratio[cooper.trim$tip.label], cooper.trim)
 phylosignal(m2.ratio[cooper.trim$tip.label], cooper.trim, reps = 1000)
 
-#Pagel's lambda, geiger
-lambda_GL_ML<-fitContinuous(phy= cooper.trim, dat = m2.ratio,
-                            model = "lambda")
+#Pagel's lambda, geiger ----------
+lambda_GL_ML<-fitContinuous(phy= cooper.fixed, dat = m2.ratio,
+                            model = "lambda") #calculate pagel's lambda
 
+lambda_GL_D1<-fitContinuous(phy= cooper.trim, dat = m2.ratio,
+                            model = "delta") #calculate pagel's delta
+
+lambda_GL_D2<-fitContinuous(phy= cooper.fixed, dat = m2.ratio,
+                            model = "delta")
+
+-2*(lambda_GL_D1$opt$lnL - lambda_GL_D2$opt$lnL)
+
+?fitContinuous
 #comparison to what you'd get if lambda were 1
 lambda_GL_L1<-fitContinuous(phy = cooper.trim, dat = m2.ratio,
                             model = "BM")
@@ -95,12 +102,36 @@ LLR2<- -2*(lambda_GL_L2$opt$lnL - lambda_GL_L1$opt$lnL)
 #can't tell difference between BM and OU model?
 pchisq(LLR2, df=1,lower.tail = FALSE)# p =1
 
-#Pagel's lambda, caper
+#categorical D statistic, caper -------
+ratios.raw$m2.binary<-0
+ratios.raw$m2.binary[which(ratios.raw$m1.shorter<0.05)]<-1
+# ratios.raw$m2.binary<-factor(ratios.raw$m2.binary)
+
 for.caper<-comparative.data(phy = cooper.trim, data = ratios.raw, 
                             names.col = tip.name,
                           vcv = TRUE, na.omit = FALSE, warn.dropped = TRUE)
+#NOTE: if you have node.labels in tree, won't work. Remove them. 
+phylo.d(for.caper,binvar=m2.binary,permut=1000)
 
+#delta statistic, Borges, ape--------
+source("code.R")
+tree<-cooper.trim
+tree$edge.length[tree$edge.length==0] <- quantile(tree$edge.length,0.1)*0.1
+trait<-ratios.raw$m2.binary
+names(trait)<-ratios.raw$tip.name
+trait<-trait[cooper.trim$tip.label]
+deltaA <- delta(trait,tree,0.1,0.0589,10000,10,100)
 
+random_delta <- rep(NA,100)
+for (i in 1:100){
+  rtrait <- sample(trait)
+  random_delta[i] <- delta(rtrait,tree,0.1,0.0589,10000,10,100)
+}
+p_value <- sum(random_delta>deltaA)/length(random_delta)
+boxplot(random_delta)
+abline(h=deltaA,col="red")
+
+#Pagel's lambda, caper -------
 model.lambda<-pgls(m2 ~ 1, data = for.caper, lambda='ML')
 
 summary(model.lambda)
