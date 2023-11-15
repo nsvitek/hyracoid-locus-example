@@ -5,7 +5,6 @@ n.to.write<-count(data.jaws.all,genus,species,Position) %>%
 write.csv(n.to.write,"hyracoid_sampling_revised.csv")
 
 #keep a dataset suitable for assessing standard deviation ------
-#championi, hendeyi, patnaiki have enough to think about sd
 #work with data.jaws & n.to.write
 well.sampled.species<-n.to.write$species[which(n.to.write[,3]>=8)]
 
