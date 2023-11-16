@@ -5,7 +5,8 @@
 
 #as of first draft, this code works after data are merged, 
 #before the rest of the analyses are necessarily called in `hyracoid_analyses.R`
-#Univariate, then bivariate for Procavia capensis ------- 
+#Univariate, then bivariate for 
+# Procavia capensis ------- 
 # well-sampled empirical: #Procavia has both ratios??
 #for just size, Saghatherium antiquum, Prohyrax hendeyi, maybe Afrohyrax championi
 
@@ -60,8 +61,8 @@ ggplot(made.curves,aes(x, y)) +
 #now bring in the second dimension (discriminator)
 ggplot(filter(data.jaws, species=="capensis"),
        aes(x = length, y = rel.widths, color = Position)) +
-  geom_density_2d() +
-  geom_point()
+  geom_density_2d(alpha = 0.2) +
+  geom_point() + theme_minimal()
 
 library(MASS)
 #note that relative length vs. length makes a difference in accuracy, but
@@ -77,7 +78,7 @@ compare.lda$Correct<-compare.lda$Position==compare.lda$PredPos
 #% correct classification
 length(which(compare.lda$Position==compare.lda$PredPos))/nrow(compare.lda)
 
-#for  Saghatherium bowni -----
+# Saghatherium bowni -----
 for.curves<-data.jaws %>% filter(species == "bowni") %>% group_by(Position) %>% 
   summarise(Mean=mean(length), Variance = var(length))
 #Use mean and variance of ratios for 2 loci, following p. 208 of Bookstein 2018 textbook
@@ -177,6 +178,8 @@ ggplot(filter(data.jaws, species=="domorictus"),
        aes(x = length, y = rel.widths, color = Position)) +
   geom_density_2d() +
   geom_point()
+
+#LDA
 LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == "bowni"))
 
 PredPos<-predict(LinDisc,filter(data.jaws, species == "domorictus"))$class
@@ -187,12 +190,19 @@ compare.lda$Correct<-compare.lda$Position==compare.lda$PredPos
 #% correct classification
 length(which(compare.lda$Position==compare.lda$PredPos))/nrow(compare.lda)
 
-#Calculate, and visualize with similar diagrams, the distribution and discrimination.
-#Then for domorictus, use modeled SD and see if it changes univariate answer
-#Then run empirical LDA for capensis
-#Then use modeled distribution for domorictus LDA, see how it goes
-#If OK, then use modelled LDA for everyone for diagnosibility
-#Then apply to Meroehyrax: model as if it did not have reference mandible. Plot together, loook for breakpoints at expected ratio difference
+# Meroehyrax kyongi as applied example ---------
 
-pchisq(10.96254,1,lower.tail=FALSE)
-pchisq(4,1,lower.tail=FALSE)
+data.test<-read_xlsx("../test_case_meroehyrax.xlsx") %>% 
+  select(-c(institution, species, publication, page, Notes)) %>% melt(id.var="number", na.rm=TRUE)
+
+data.test$Position<-gsub("(m[123]).*","\\1",data.test$variable)
+data.test$measure<-gsub("m[123] (.*)","\\1",data.test$variable)
+
+data.tf<-data.test %>% select(-variable) %>% dcast(formula = number + Position ~ measure)
+
+data.tf$rel.widths<-data.tf$WM/data.tf$WD
+
+ggplot(data.tf,  aes(x = L, y = rel.widths, color = Position)) +
+  # geom_density_2d() +
+  geom_point() + geom_text(aes(label = number),vjust=-1.)
+

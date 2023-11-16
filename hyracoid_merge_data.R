@@ -42,8 +42,8 @@ data.jaws.all<-rbind(select(data2merge,Sample,Position,length,genus,species),
 #doing this the slow, painful way.
 data.jaws.all$m1.length<-NA
 for (i in 1:nrow(data.jaws.all)){
-  wanted.value<-data.jaws.all$length[which(data.jaws.all$Sample==data.jaws.all$Sample[i] & 
-                                         data.jaws.all$Position=="m1")]
+  wanted.value<-mean(data.jaws.all$length[which(data.jaws.all$species==data.jaws.all$species[i] & 
+                                         data.jaws.all$Position=="m1")])
   if (length(wanted.value)==0){ next }
   data.jaws.all$m1.length[i]<-wanted.value
 }
