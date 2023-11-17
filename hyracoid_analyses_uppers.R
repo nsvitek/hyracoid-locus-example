@@ -62,4 +62,11 @@ overlap.table<-cbind(mean.ratios,p.vals.m1.rw,
                      p.vals.m1.l,
                      p.vals.m2.l, p.vals.m1.ml, p.vals.m2.ml)
 
+overlap.table$m1.rw.bh<-p.vals.m1.rw %>% p.adjust(method = "BH")
+overlap.table$m2.rw.bh<-p.vals.m2.rw %>% p.adjust(method = "BH")
+overlap.table$m1.l.bh<-p.vals.m1.l %>% p.adjust(method = "BH")
+overlap.table$m2.l.bh<-p.vals.m2.l %>% p.adjust(method = "BH")
+overlap.table$m1.ml.bh<-p.vals.m1.ml %>% p.adjust(method = "BH")
+overlap.table$m2.ml.bh<-p.vals.m2.ml %>% p.adjust(method = "BH")
+
 write.csv(overlap.table,"ratios_differ.csv")

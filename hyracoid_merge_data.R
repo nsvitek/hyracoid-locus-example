@@ -31,9 +31,9 @@ if(arcade=="uppers"){ #minor formatting change to make late code work
   data.lit$Position<-tolower(data.lit$Position)
 }
 #merge all datasets ----------
-data.jaws.all<-rbind(select(data2merge,Sample,Position,length,genus,species), 
-                 select(data.c2merge,Sample,Position,length,genus,species),
-                 select(data.lit,Sample,Position,length,genus,species))
+data.jaws.all<-rbind(dplyr::select(data2merge,Sample,Position,length,genus,species), 
+                 dplyr::select(data.c2merge,Sample,Position,length,genus,species),
+                 dplyr::select(data.lit,Sample,Position,length,genus,species))
 
 # calculate length relative to m1 -------
 #absolute length is not going to work well with statistics. 

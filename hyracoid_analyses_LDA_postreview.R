@@ -10,7 +10,6 @@
 # well-sampled empirical: #Procavia has both ratios??
 #for just size, Saghatherium antiquum, Prohyrax hendeyi, maybe Afrohyrax championi
 
-
 ggplot(filter(data.jaws, species=="capensis"),
        aes(x = length, fill = Position)) +
   geom_histogram(color="#e9ecef", alpha=0.6, position = 'identity',binwidth=0.25)

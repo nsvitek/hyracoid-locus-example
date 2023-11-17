@@ -31,7 +31,7 @@ ggsave("comparative_ratios.pdf",device = cairo_pdf, width = double.column.width,
 # model variation --------
 #use Procavia capensis (highest sample size among species) to model standard deviation of traits
 stdevs<-linear2plot %>% group_by(Position, variable) %>% 
-  summarise(stdev=sd(value))
+  summarise(stdev=sd(value, na.rm=TRUE))
 write.csv(stdevs,"ratio_standard_deviations.csv")
 
 # ARCADE-SPECIFIC: lowers-------
@@ -67,5 +67,9 @@ m1.shorter<-((mean.ratios$m1-mean.ratios$m2)/stdevs$stdev[6])  %>% pnorm() %>% r
 m2.shorter<-((mean.ratios$m2-mean.ratios$m3)/stdevs$stdev[10])  %>% pnorm() %>% round(4)
 
 overlap.table<-cbind(mean.ratios,m1.shorter,m2.shorter)
+
+#add correction for multiple tests:
+overlap.table$m1.bh<-m1.shorter %>% p.adjust(method = "BH")
+overlap.table$m2.bh<-m2.shorter %>% p.adjust(method = "BH")
 
 write.csv(overlap.table,"ratios_differ_literature.csv")

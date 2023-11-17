@@ -56,13 +56,14 @@ keep.these.tips<-which(cooper.fixed$tip.label %in% ratios.raw$tip.name)
 drop.these.tips<-cooper.fixed$tip.label[-keep.these.tips]
 cooper.trim<-drop.tip(cooper.fixed,drop.these.tips)
 # cooper.trim<-drop.tip(cooper.trim,c("Seggeurius_amourensis"))
-cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
-                                    "Thyrohyrax_meyeri",
-                                    "Thyrohyrax_domorictus","Prohyrax_hendeyi",
-                                   "Procavia_capensis"))
+# cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
+#                                     "Thyrohyrax_meyeri",
+#                                     "Thyrohyrax_domorictus","Prohyrax_hendeyi",
+#                                    "Procavia_capensis"))
 cooper.trim$node.label<-NULL #remove node labels entirely
 plot(cooper.trim)
 
+#Blomberg et al's K ------------
 #pull the m2 ratio into a separate formatted object, following tutorials
 m2.ratio<-ratios.raw$m2
 names(m2.ratio)<-ratios.raw$tip.name
@@ -70,10 +71,10 @@ m2.ratio<-m2.ratio[complete.cases(m2.ratio)] #inferred names causing issues with
 
 #pull the m3 ratio into a separate formatted object, following tutorials
 m3.ratio<-ratios.raw$m3
+
 names(m3.ratio)<-ratios.raw$tip.name
 m3.ratio<-m3.ratio[complete.cases(m3.ratio)]
 
-#Blomberg et al's K ------------
 print("m2, all taxa")
 Kcalc(m2.ratio[cooper.fixed$tip.label], cooper.fixed)
 phylosignal(m2.ratio[cooper.fixed$tip.label], cooper.fixed, reps = 1000)
@@ -119,33 +120,107 @@ names(m3.w)<-ratios.width$tip.name
 print("m3, relative widths")
 phylosignal(m3.w[cooper.trim$tip.label], cooper.trim, reps = 1000)
 
-# #delta statistic, Borges, ape--------
-# ratios.raw$m2.binary<-0
-# ratios.raw$m2.binary[which(ratios.raw$m1.shorter<0.05)]<-1
+# #categorical D statistic, caper: underpowered -------
+# ratios.bin.lit<-read.csv("ratios_differ_literature.csv")
+# ratios.bin.lit$m2.binary<-0
+# ratios.bin.lit$m2.binary[which(ratios.bin.lit$m1.shorter<0.05)]<-1
 # 
-# source("../code.R")
-# tree<-cooper.trim
-# tree$edge.length[tree$edge.length==0] <- quantile(tree$edge.length,0.1)*0.1
-# trait<-ratios.raw$m2.binary
-# names(trait)<-ratios.raw$tip.name
-# trait<-trait[cooper.trim$tip.label]
-# deltaA <- delta(trait,tree,0.1,0.0589,10000,10,100)
-# 
-# random_delta <- rep(NA,100)
-# for (i in 1:100){
-#   rtrait <- sample(trait)
-#   random_delta[i] <- delta(rtrait,tree,0.1,0.0589,10000,10,100)
-# }
-# p_value <- sum(random_delta>deltaA)/length(random_delta)
-# boxplot(random_delta)
-# abline(h=deltaA,col="red")
+# library(caper)
+# # ratios.raw$m2.binary<-factor(ratios.raw$m2.binary)
+# cooper.trim$node.label<-NULL #remove node labels entirely
+# for.caper<-comparative.data(phy = cooper.trim, data = ratios.bin.lit, 
+#                             names.col = tip.name,
+#                             vcv = TRUE, na.omit = FALSE, warn.dropped = TRUE)
+# #NOTE: if you have node.labels in tree, won't work. Remove them. 
+# phylo.d(for.caper,binvar=m2.binary,permut=10000)
+
+# delta statistic, Borges, ape--------
+ratios.bin.lit<-read.csv("ratios_differ_literature.csv")
+ratios.bin.lit$m2.binary<-0
+ratios.bin.lit$m2.binary[which(ratios.bin.lit$m1.shorter<0.05)]<-1
+
+ratios.bin.lit$tip.name<-paste(ratios.bin.lit$genus,ratios.bin.lit$species,sep="_")
+
+keep.these.tips<-which(cooper.fixed$tip.label %in% ratios.bin.lit$tip.name)
+drop.these.tips<-cooper.fixed$tip.label[-keep.these.tips]
+cooper.trim<-drop.tip(cooper.fixed,drop.these.tips)
+
+source("../code.R")
+tree<-cooper.trim
+tree$edge.length[tree$edge.length==0] <- quantile(tree$edge.length,0.1)*0.1
+trait<-ratios.bin.lit$m2.binary
+names(trait)<-ratios.bin.lit$tip.name
+trait<-trait[cooper.trim$tip.label]
+trait[1]<-1
+
+#like D (and K also, turns out), delta can't handle an invariant trait
+deltaA <- delta(trait,tree,0.1,0.0589,10000,10,100)
+
+
+# simulation to confirm rtrait works -----
+tree.rando<-rtree(100)
+brown.rando<-rtrait(tree.rando, R = matrix(c(0, lambda.0, lambda.0, 0), 2),nstates=2)
+plot(tree.rando,tip.color=c("red","blue")[brown.rando])
+deltaA.rando <- delta(brown.rando,tree.rando,lambda.0,0.0589,10000,10,100)
+
+for (i in 1:100){
+  rtrait <- sample(brown.rando)
+  random_delta[i] <- delta(rtrait,tree.rando,lambda.0,0.0589,10000,10,100)
+} #this way of estimating p seems useless if you have an invariant or little-variant trait:
+# shuffling won't change the value, or amt of information because it'll be same ancestral state either way
+p_value <- sum(random_delta>deltaA)/length(random_delta) #p value is 1
+#I'm not sure this is working...
+#shouldn't this example simulated with rtrait definitely have phylogenetic signal?
+boxplot(c(random_delta,deltaA.rando))
+abline(h=deltaA.rando,col="red")
+#oh, okay, so 1 is equivalent to a p values of <0.00001 or somethign small. So you could consider it 
+#significant if p < 0.025 or p > 0.0975
+#importantly, this test confirms that rtrait is doing what we expect: simulating a trait
+#with signal that fits the tree structure. Now, apply to the smaller (less powerful) hyracoid tree:
+
+# simulation to look at impact of increasing trait inertia on delta ------
+nreps<-100
+sim.delta<-list()
+lambda.0<-0.1
+
+for (i in 1:nreps){
+  brown.traits.0<-rtrait(tree, R = matrix(c(0, lambda.0, lambda.0, 0), 2),nstates=2)
+  # plot(tree,tip.color=c("red","blue")[brown.traits.0])
+  deltaA.0 <- delta(brown.traits.0,tree,lambda.0,0.0589,10000,10,100)
+  
+  # simulate the character becoming more and more intertial (conserved) from root to tip
+  brown.traits.sim<-brown.traits.0
+  delta.vals<-deltaA.0
+  for(tip in 1:(length(brown.traits.sim)-1)){
+    brown.traits.sim[tip]<-2
+    deltaA.sim <- delta(brown.traits.sim,tree,lambda.0,0.0589,10000,10,100)
+    delta.vals<-c(delta.vals,deltaA.sim)
+    #if the next step would create invariant character distribution, top and move to next
+    if(length(which(brown.traits.sim==1))==1) {break}
+  }
+  sim.delta[[i]]<-delta.vals
+}
+
+ending.values<-sapply(sim.delta, tail, 1) %>% range
+ending.values2<-sapply(sim.delta, tail, 2) %>% range
+
+sim.table<-sapply(sim.delta, '[', seq(max(sapply(sim.delta, length)))) %>% as.data.frame
+sim.table$tip<-seq(1:nrow(sim.table))
+sim.long<-sim.table %>% melt(id.vars="tip",variable.name = "replicate")
+
+write.csv(sim.table,"simulated_rel_length_delta.csv")
+
+
+ggplot(sim.long, aes(x = tip, y = log(value), group = replicate)) + 
+  geom_line(alpha = 0.2) +
+  geom_hline(yintercept=log(ending.values),linetype="dashed",color="red")
 
 
 # #plotting ------
 # 
 # backward.tree<-ggplot(bayesian.tree.mkv,aes(x,y)) + geom_tree() + geom_tiplab(fontface=3) + #could color branches by BPP with ",color=prob" in aes
 #   theme_tree2() + #hexpand(0.02,direction=1) + #scale_x_continuous(labels = abs)
-#   geom_range(range='height_0.95HPD',alpha=0.4,size=2) +
+#   geom_range(range='height_0.95HPD',alpha=0.5,size=2) +
 #   geom_nodelab(aes(x=branch,label=round(prob,2)),vjust=-0.5,size=2) #+
 #   scale_color_continuous(low="gray",high="black") #+
 #     #improve the color scheme

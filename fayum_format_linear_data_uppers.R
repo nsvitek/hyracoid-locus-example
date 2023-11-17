@@ -40,7 +40,7 @@ data.jaws$rel.length<-data.jaws$length/data.jaws$m1.length
 # cbind(data.jaws$Sample, data.jaws$rel.length)[data.jaws$Position=="m1",]
 
 linear2plot2<-data.jaws %>% 
-  select(species,Position,rel.length,rel.widths,rel.meta, proportion) %>%
+  dplyr::select(species,Position,rel.length,rel.widths,rel.meta, proportion) %>%
   melt(id=c("species","Position"))
 
 #Make facet label names

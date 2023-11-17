@@ -18,7 +18,7 @@ new.names<-data.genus$Synonym[new.names.index]
 data.literature$species[need.renaming]<-new.names
 
 # format ------
-data.lit.long<-select(data.literature,-c(publication,page,Notes)) %>%
+data.lit.long<-dplyr::select(data.literature,-c(publication,page,Notes)) %>%
   melt(id=c("institution", "number","genus","species","side")) %>% filter(!is.na(value))
 data.lit.long$measure<-"length"
 data.lit.long$measure[grep(".* W$", data.lit.long$variable)]<-"width"

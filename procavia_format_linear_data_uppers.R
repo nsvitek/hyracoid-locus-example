@@ -36,7 +36,7 @@ data.avg$rel.length<-data.avg$length/data.avg$m1.length
 #make a plot similar to Fig. 6 of Vitek and Chen 2022: grouped series of scatterplots + boxplots
 #to give initial sense of utility of various metrics. 
 linear2plot<-data.avg %>% 
-  select(Position,proportion,rel.length,rel.meta,rel.widths) %>%
+  dplyr::select(Position,proportion,rel.length,rel.meta,rel.widths) %>%
   melt(id="Position")
 
 #Make facet label names
