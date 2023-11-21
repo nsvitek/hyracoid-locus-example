@@ -11,6 +11,7 @@ library(readxl) #read procavia data
 library(reshape2)
 library(caret)
 library(khroma) #for  Paul Tol color options
+library(MASS) #for LDA in post-review analyses
 
 # locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
 locateData<-"D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"

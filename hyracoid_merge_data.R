@@ -43,7 +43,7 @@ data.jaws.all<-rbind(dplyr::select(data2merge,Sample,Position,length,genus,speci
 data.jaws.all$m1.length<-NA
 for (i in 1:nrow(data.jaws.all)){
   wanted.value<-mean(data.jaws.all$length[which(data.jaws.all$species==data.jaws.all$species[i] & 
-                                         data.jaws.all$Position=="m1")])
+                                         data.jaws.all$Position=="m1")],na.rm=TRUE)
   if (length(wanted.value)==0){ next }
   data.jaws.all$m1.length[i]<-wanted.value
 }
@@ -53,7 +53,3 @@ data.jaws.all$rel.length<-data.jaws.all$length/data.jaws.all$m1.length
 data.jaws.all<-data.jaws.all[!is.na(data.jaws.all$rel.length),]
 #also ditch NaN's
 data.jaws.all<-data.jaws.all[!is.nan(data.jaws.all$rel.length),]
-
-
-
-
