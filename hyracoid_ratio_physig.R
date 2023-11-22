@@ -9,8 +9,6 @@ library(readxl) #for tip date spreadsheet
 library(RRphylo) #for applying dates to tree, resolving polytomies
 
 library(picante) #for blomberg's k
-# library(geiger) #for pagel's lambda
-# library(caper) #for pagel's lambda alternative
 
 # set path, objects used no matter what ------
 getwd()
@@ -120,7 +118,7 @@ names(m3.w)<-ratios.width$tip.name
 print("m3, relative widths")
 phylosignal(m3.w[cooper.trim$tip.label], cooper.trim, reps = 1000)
 
-# #categorical D statistic, caper: underpowered -------
+# #categorical D statistic, using library caper: underpowered -------
 # ratios.bin.lit<-read.csv("ratios_differ_literature.csv")
 # ratios.bin.lit$m2.binary<-0
 # ratios.bin.lit$m2.binary[which(ratios.bin.lit$m1.shorter<0.05)]<-1

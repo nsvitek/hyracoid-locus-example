@@ -37,10 +37,12 @@ write.csv(stdevs,"ratio_standard_deviations.csv")
 # ARCADE-SPECIFIC: lowers-------
 if(arcade=="lowers"){
   source(paste(locateScripts,"hyracoid_analyses_lowers.R",sep="/"))
+  source(paste(locateScripts,"hyracoid_analyses_LDA_lowers.R",sep="/"))
 }
 
 if(arcade=="uppers"){
   source(paste(locateScripts,"hyracoid_analyses_uppers.R",sep="/"))
+  source(paste(locateScripts,"hyracoid_analyses_LDA_uppers.R",sep="/"))
 }
 
 # ARCADE-GENERAL: include literature measurements ------

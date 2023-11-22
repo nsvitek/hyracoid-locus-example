@@ -1,5 +1,4 @@
 #Hyracoid locus code after revision: Request for LDA
-library(gridExtra)
 
 # Preparation ---------
 #as of first draft, this code works after data are merged, 
@@ -50,7 +49,7 @@ plot.locus.overlap<-function(data.jaws, species.name){
     geom_area(data = . %>% filter(fill_3), fill='blue', alpha=0.2, position = 'identity') +
     geom_line(aes(group = group)) +
     theme_minimal() +  #base_size = 16
-    labs(x = "", y = "Proportional Frequency") + #x = "Length",
+    labs(x = "Length", y = "Proportional Frequency") +
     scale_x_discrete(labels = NULL, breaks = NULL)
   return(output.plot)
 }
@@ -89,19 +88,19 @@ bowni.curve.plot<-plot.locus.overlap(data.jaws, "bowni")
 #now bring in the second dimension (discriminator)
 bowni.density.plot<-plot.density.2d(data.jaws, "bowni")
 
-# Thyrohyax domorictus ----
+# Thyrohyax meyeri ----
 #plot length discrimination
-domorictus.curve.plot<-plot.locus.overlap(data.jaws, "domorictus")
+meyeri.curve.plot<-plot.locus.overlap(data.jaws, "meyeri")
 
 #now bring in the second dimension (discriminator)
-domorictus.density.plot<-plot.density.2d(data.jaws, "domorictus")
+meyeri.density.plot<-plot.density.2d(data.jaws, "meyeri")
 
 # composite plot ------
-composite.density<-grid.arrange(capensis.curve.plot,bowni.curve.plot, domorictus.curve.plot,
-             capensis.density.plot,bowni.density.plot, domorictus.density.plot,
+composite.density<-grid.arrange(capensis.curve.plot,bowni.curve.plot, meyeri.curve.plot,
+             capensis.density.plot,bowni.density.plot, meyeri.density.plot,
              ncol=3, nrow = 2, heights = c(2,3))
 ggsave("visual_LDA.pdf",composite.density,device = cairo_pdf, width = double.column.width,
-       height = double.column.width,units="in",dpi=600)
+       height = 3,units="in",dpi=600)
 
 #LDA capensis ------
 #note that using relative length vs. length makes a difference in accuracy, but
@@ -109,58 +108,48 @@ ggsave("visual_LDA.pdf",composite.density,device = cairo_pdf, width = double.col
 #Therefore, for LDA the fairer test of discriminatory ability uses absolute length, which allows for
 #teeth to be isolated. 
 
+species.choice<-"capensis"
+
 #calculate the linear discriminant model
-LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == "capensis"),CV=TRUE)
+LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=TRUE)
+lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=FALSE)
+
 #evaluate the predictive ability for the model on the data used to build it
 #not ideal, but sample size doesn't allow for better option
-conf.matrix<-table(filter(data.jaws, species == "capensis")$Position, LinDisc$class)
-compare.lda<-data.jaws %>% filter(species == "capensis") %>% dplyr::select(Position) %>% 
-  cbind(LinDisc$class)
-
-#% accuracy
-length(which(compare.lda$Position==compare.lda$`LinDisc$class`))/nrow(compare.lda)
-
-#write confusion matrix and accuracy to files. 
+observed.data<-data.jaws$Position[which(data.jaws$species == species.choice)]
+compare.lda<- cbind(observed.data, LinDisc$class)
+#provides confusion matrix, % accuracy, and no-information rate, writes to text file
+sink(file=paste("LDA_",species.choice,".txt",sep=""))
+confusionMatrix(data = LinDisc$class, reference = factor(observed.data))
+sink()
 
 # LDA bowni ------
-LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == "bowni"))
+species.choice<-"bowni"
 
-PredPos<-predict(LinDisc,filter(data.jaws, species == "bowni"))$class
+#calculate the linear discriminant model
+LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=TRUE)
+lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=FALSE)
 
-compare.lda<-data.jaws %>% filter(species == "bowni") %>% dplyr::select(Position) %>% cbind(PredPos)
-compare.lda$Correct<-compare.lda$Position==compare.lda$PredPos
+#evaluate the predictive ability for the model on the data used to build it
+#not ideal, but sample size doesn't allow for better option
+observed.data<-data.jaws$Position[which(data.jaws$species == species.choice)]
+compare.lda<- cbind(observed.data, LinDisc$class)
+#provides confusion matrix, % accuracy, and no-information rate, writes to text file
+sink(file=paste("LDA_",species.choice,".txt",sep=""))
+confusionMatrix(data = LinDisc$class, reference = factor(observed.data))
+sink()
+# LDA Thyrohyrax meyeri ----
+species.choice<-"meyeri"
 
-#% correct classification
-length(which(compare.lda$Position==compare.lda$PredPos))/nrow(compare.lda)
+#calculate the linear discriminant model
+LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=TRUE)
+lda(Position ~ length + rel.widths, data=filter(data.jaws, species == species.choice),CV=FALSE)
 
-# LDA Thyrohyrax domorictus ----
-#LDA
-LinDisc<-lda(Position ~ length + rel.widths, data=filter(data.jaws, species == "bowni"))
-
-PredPos<-predict(LinDisc,filter(data.jaws, species == "domorictus"))$class
-
-compare.lda<-data.jaws %>% filter(species == "domorictus") %>% dplyr::select(Position) %>% cbind(PredPos)
-compare.lda$Correct<-compare.lda$Position==compare.lda$PredPos
-
-#% correct classification
-length(which(compare.lda$Position==compare.lda$PredPos))/nrow(compare.lda)
-
-# Meroehyrax kyongi as applied example ---------
-
-data.test<-read_xlsx("../test_case_meroehyrax.xlsx") %>% 
-  select(-c(institution, species, publication, page, Notes)) %>% melt(id.var="number", na.rm=TRUE)
-
-data.test$Position<-gsub("(m[123]).*","\\1",data.test$variable)
-data.test$measure<-gsub("m[123] (.*)","\\1",data.test$variable)
-
-data.tf<-data.test %>% select(-variable) %>% dcast(formula = number + Position ~ measure)
-
-data.tf$rel.widths<-data.tf$WM/data.tf$WD
-
-ggplot(data.tf,  aes(x = L, y = rel.widths, color = Position)) +
-  # geom_density_2d() +
-  geom_point() + geom_text(aes(label = number),vjust=-1.)
-
-
-
-#for uppers: Procavia capensis, Saghatherium bowni, Thyrohyrax meyeri -----
+#evaluate the predictive ability for the model on the data used to build it
+#not ideal, but sample size doesn't allow for better option
+observed.data<-data.jaws$Position[which(data.jaws$species == species.choice)]
+compare.lda<- cbind(observed.data, LinDisc$class)
+#provides confusion matrix, % accuracy, and no-information rate, writes to text file
+sink(file=paste("LDA_",species.choice,".txt",sep=""))
+confusionMatrix(data = LinDisc$class, reference = factor(observed.data))
+sink()

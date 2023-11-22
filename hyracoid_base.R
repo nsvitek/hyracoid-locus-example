@@ -1,8 +1,8 @@
 #This script is intended to be used after linear measurements are developed
 
 #two options for analyses: analyze upper molars or lower molars?
-arcade <- "lowers"
-# arcade <- "uppers"
+# arcade <- "lowers"
+arcade <- "uppers"
 
 #read in data -----------
 library(dplyr) #organize
@@ -11,7 +11,9 @@ library(readxl) #read procavia data
 library(reshape2)
 library(caret)
 library(khroma) #for  Paul Tol color options
-library(MASS) #for LDA in post-review analyses
+library(MASS) #for LDA
+library(gridExtra) #for multi-part plot in LDA
+library(caret) #for confusion matrix function, makes reporting a lot easier
 
 # locateData <- "C:/Users/nsvit/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
 locateData<-"D:/Dropbox/Documents/research/Turkana/hyracoidea/hyracoid_tooth_position"
@@ -57,3 +59,5 @@ source(paste(locateScripts,"hyracoid_merge_data.R",sep="/"))
 # analytical steps -------
 #then source the shared analytical steps 
 source(paste(locateScripts,"hyracoid_analyses.R",sep="/"))
+
+
