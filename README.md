@@ -9,6 +9,7 @@ The next steps (which is automatically sourced in the base script) are in `hyrac
 
 The next part (`hyracoid_analyses.R`) produces descriptive statistics, then conduct analyses, including calling scripts that are specific to the upper or lower tooth arcade (because slightly different sets of variables are evaluated in each). The analytical code calls either of two sets: 
 
-	- `hyracoid_analyses_lowers.R` & `hyracoid_analyses_LDA_lowers.R` 
+	- `hyracoid_analyses_lowers.R` & `hyracoid_analyses_LDA_lowers.R`
 	- `hyracoid_analyses_uppers.R` & `hyracoid_analyses_LDA_uppers.R` 
 
+as well as `hyracoid_ratio_physig.R` which itself calls `retention_borges_delta.R`

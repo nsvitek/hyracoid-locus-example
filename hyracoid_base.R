@@ -1,8 +1,8 @@
 #This script is intended to be used after linear measurements are developed
 
 #two options for analyses: analyze upper molars or lower molars?
-# arcade <- "lowers"
-arcade <- "uppers"
+arcade <- "lowers"
+# arcade <- "uppers"
 
 #read in data -----------
 library(dplyr) #organize
