@@ -54,10 +54,10 @@ keep.these.tips<-which(cooper.fixed$tip.label %in% ratios.raw$tip.name)
 drop.these.tips<-cooper.fixed$tip.label[-keep.these.tips]
 cooper.trim<-drop.tip(cooper.fixed,drop.these.tips)
 # cooper.trim<-drop.tip(cooper.trim,c("Seggeurius_amourensis"))
-# cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
-#                                     "Thyrohyrax_meyeri",
-#                                     "Thyrohyrax_domorictus","Prohyrax_hendeyi",
-#                                    "Procavia_capensis"))
+cooper.trim<-drop.tip(cooper.trim,c("Thyrohyrax_litholagus","Thyrohyrax_pygmaeus",
+                                    "Thyrohyrax_meyeri",
+                                    "Thyrohyrax_domorictus","Prohyrax_hendeyi",
+                                   "Procavia_capensis"))
 cooper.trim$node.label<-NULL #remove node labels entirely
 plot(cooper.trim)
 

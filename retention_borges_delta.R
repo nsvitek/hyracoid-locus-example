@@ -70,7 +70,8 @@ for (i in 1:nreps){
   }
 }
 
-write.csv(sim.delta,paste("simulated_delta_",trait.choice,".csv",sep=""))
+
+#or, if done in previous analysis:
 sim.table<-as.data.frame(sim.delta)
 sim.table$number.derived.tips<-seq(1:nrow(sim.delta))
 
@@ -80,12 +81,15 @@ for(i in 1:nrow(initial.deltas)){
   sim.long$starting.val[which(sim.long$number.derived.tips==initial.deltas[i,2]&sim.long$value==initial.deltas[i,1])]<-TRUE
 }
 
+write.csv(sim.long,paste("simulated_delta_",trait.choice,".csv",sep=""))
+sim.long<-read.csv(paste("simulated_delta_",trait.choice,".csv",sep=""))
+
 #plot results
 ggplot(sim.long, aes(x = number.derived.tips, y = log(1+value), color = starting.val, group=replicate)) + 
-  geom_line(alpha = 0.2) +
-  geom_jitter(alpha= 0.4,width=0.25) + 
+  # geom_line(alpha = 0.2) +
+  geom_jitter(alpha= 0.4,width=0.25, aes(shape = starting.val)) + 
   geom_point(x = length(which(trait==1)), y = log(1+deltaA), color = "black")+
-  scale_color_manual(values=c("gray","red")) + theme_minimal() +
+  scale_color_manual(values=c("gray","red")) +theme_minimal() + theme(legend.position="none") + 
   labs(x = "Number of derived tips", y = "log(1+ \u03B4)",parse=TRUE) 
 
 ggsave(paste("delta_",trait.choice,".pdf",sep=""),device = cairo_pdf, width = single.column.width,

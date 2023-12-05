@@ -61,7 +61,6 @@ plot.density.2d<-function(data.jaws, species.name){
     geom_density_2d(alpha=0.2) +
     geom_point() + theme_minimal() + theme(legend.position="none") +
     labs(x = "Length", y = "Relative Widths")
-  geom_point()
   return(plot.me)
 }
 # Procavia capensis ------- 
@@ -157,19 +156,19 @@ sink()
 # Meroehyrax kyongi as applied example ---------
 
 data.test<-read_xlsx("../test_case_meroehyrax.xlsx") %>% 
-  select(-c(institution, species, publication, page, Notes)) %>% melt(id.var="number", na.rm=TRUE)
+  dplyr::select(-c(institution, species, publication, page, Notes)) %>% melt(id.var="number", na.rm=TRUE)
 
 data.test$Position<-gsub("(m[123]).*","\\1",data.test$variable)
 data.test$measure<-gsub("m[123] (.*)","\\1",data.test$variable)
 
-data.tf<-data.test %>% select(-variable) %>% dcast(formula = number + Position ~ measure)
+data.tf<-data.test %>% dplyr::select(-variable) %>% dcast(formula = number + Position ~ measure)
 
 data.tf$rel.widths<-data.tf$WM/data.tf$WD
 
-ggplot(data.tf,  aes(x = L, y = rel.widths, color = Position)) +
-  # geom_density_2d() +
-  geom_point() + geom_text(aes(label = number),vjust=-1.)
+ggplot(data.tf, aes(x = L, y = rel.widths, color = Position, shape = Position)) +
+  # geom_density_2d(alpha=0.2) +
+  geom_point() + theme_minimal() + #theme(legend.position="none") +
+  labs(x = "Length", y = "Relative Widths") + geom_text(aes(label = number),vjust=-1.)
+ggsave("meroehyrax_case.pdf",device = cairo_pdf, width = single.column.width,
+       height = single.column.width,units="in",dpi=600)
 
-
-
-#for uppers: Procavia capensis, Saghatherium bowni, Thyrohyrax meyeri -----
