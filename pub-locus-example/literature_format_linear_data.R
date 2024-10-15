@@ -1,5 +1,5 @@
 #COMPARATIVE LITERATURE ----
-file.name<-paste(locateData,"../Records/PublishedHyracoidToothSize.xlsx",sep="/")
+file.name<-paste(locateData,"published-tooth-sizes.xlsx",sep="/")
 data.literature<-read_excel(file.name,sheet="LiteratureMeasurements")
 data.genus<-read_excel(file.name,sheet="GenusKey")
 

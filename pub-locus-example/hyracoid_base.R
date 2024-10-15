@@ -30,7 +30,7 @@ scale_locus<-as.character(colour("muted")(3))
 #read measurement spreadsheets
 # UPPERS ---------
 if(arcade=="uppers"){
-  data.procavia<-read_excel(paste(locateData,"modern-procavia-metadata-uppers.xlsx",sep="/"))
+  data.procavia<-read_excel(paste(locateData,"modern-procavia-uppers.xlsx",sep="/"))
   data.comparative<-read_excel(paste(locateData,"hyracoidea_fayum_locus_comparisons.xlsx",sep="/"),sheet="Measurements-Upper")
   linear_format_script<-"procavia_format_linear_data_uppers.R"
   comparative_format_script<-"fayum_format_linear_data_uppers.R"
@@ -42,7 +42,7 @@ if(arcade=="uppers"){
 
 # #LOWERS ----------
 if(arcade=="lowers"){
-  data.procavia<-read_excel(paste(locateData,"modern-procavia-metadata.xlsx",sep="/"))
+  data.procavia<-read_excel(paste(locateData,"modern-procavia-lowers.xlsx",sep="/"))
   data.comparative<-read_excel(paste(locateData,"hyracoidea_fayum_locus_comparisons.xlsx",sep="/"),sheet="Measurements-Lower")
   linear_format_script<-"procavia_format_linear_data_lowers.R"
   comparative_format_script<-"fayum_format_linear_data_lowers.R"
